@@ -14,7 +14,7 @@ library(ggpubr)
 
 # // LOAD OCCURRENCE DATA
 
-data <- read.xlsx("../Datos/S_mag_RADseqANDbarcoding_Cleaned_for_Diego2.xlsx", "Sheet1") %>%
+data <- read.xlsx("../Data/S_mag_RADseqANDbarcoding_Cleaned_for_Diego2.xlsx", "Sheet1") %>%
   select(1:7) %>%
   rename(Loc = Loc.abbr) %>%
   rename(Sample = Unique_Coll_ID) %>%
@@ -29,7 +29,7 @@ data <- read.xlsx("../Datos/S_mag_RADseqANDbarcoding_Cleaned_for_Diego2.xlsx", "
 
 # // LOAD PHYLOGENETIC DATA
 
-tree <- read.tree(file = "../Datos/Mag.newick")
+tree <- read.tree(file = "../Data/Mag.newick")
 species <- unique(sapply(strsplit(tree$tip.label,"_"),function(x) x[2]))
 ii <- sapply(species, function(x,y) {grep(x,y)[1]}, y = tree$tip.label)
 tree <- drop.tip(tree, setdiff(tree$tip.label, tree$tip.label[ii]))
@@ -77,21 +77,21 @@ loc_buffer <- loc_sf %>%
   st_buffer(dist = 100000)
 
 
-# // DOWNLOAD ENVIRONMENTAL DATA FROM CHELSA WEBSITE (RAN ONCE)
+# // DOWNLOAD ENVIRONMENTAL DATA FROM CHELSA WEBSITE (RUN ONCE)
 
-# setwd("Datos")
+# setwd("../Data")
 # system2("wget", args = c("--no-host-directories", "--force-directories", "--input-file=envidatS3paths.txt"))
-# chelsa.files <- list.files("Datos/envicloud/chelsa/chelsa_V2/GLOBAL/climatologies/1981-2010/bio/", full.names = TRUE)
+# chelsa.files <- list.files("envicloud/chelsa/chelsa_V1/GLOBAL/climatologies/bio/", full.names = TRUE)
 # dir.create("Chelsa")
-# unlink("Datos/envicloud/", recursive = TRUE)
+# unlink("Data/envicloud/", recursive = TRUE)
 # file.rename(from = chelsa.files, to = paste0("Chelsa/", basename(chelsa.files)))
-# setwd("..")
+# setwd("../01_HMSC")
 
 
 # // LOAD CLIMATE DATA AND TAILOR THEM
 
 # chelsa <- "/media/NAS/Public/Data/Chelsa/v1.2/bio/" %>%
-chelsa <- "../../../Data/Chelsa/v1.2/bio/" %>%
+chelsa <- "../Data/Chelsa/v1.2/bio/" %>%
   list.files(full.names = TRUE) %>%
   terra::rast()
 
@@ -149,7 +149,7 @@ pca_b <- autoplot(env_pca,
                   y = 3,
                   loadings.label.alpha = pca_alpha)
 
-pdf("Results/Supplementary/pca.pdf", width = 7, height = 3)
+pdf("output/Supplementary/pca.pdf", width = 7, height = 3)
   ggarrange(pca_a, pca_b, ncol = 2)
 dev.off()
 
@@ -247,14 +247,14 @@ es <- effectiveSize(mpost$Beta)
 gd <- gelman.diag(mpost$Beta, multivariate = FALSE)$psrf
 
 # Plot ES and GD histograms
-pdf(file = "Results/Supplementary/Beta_convergence.pdf", width = 6, height = 4)
+pdf(file = "output/Supplementary/Beta_convergence.pdf", width = 6, height = 4)
 par(mfrow=c(1,2))
 hist(es, main = "", xlab = "Effective sample size")
 hist(gd, main = "", xlab = "Gelman diagnostic")
 dev.off()
 
 # Plot chain convergence
-pdf(file = "Results/Supplementary/Chain_convergence.pdf", height = 9)
+pdf(file = "output/Supplementary/Chain_convergence.pdf", height = 9)
 plot(mpost$Beta)
 dev.off()
 
@@ -266,7 +266,7 @@ preds_train <- computePredictedValues(m)
 evaluateModelFit(hM = m, predY = preds_train) %>%
   as.data.frame() %>%
   mutate(species = c("diabolicum", "divinum", "magniae", "medium")) %>%
-  write.xlsx("Results/training_evaluation.xlsx")
+  write.xlsx("output/training_evaluation.xlsx")
 
 # On four random testing partitions
 partition <- createPartition(m, nfolds = 4)
@@ -274,13 +274,13 @@ preds_test <- computePredictedValues(m, partition = partition, nParallel = 2)
 evaluateModelFit(hM = m, predY = preds_test) %>%
   as.data.frame() %>%
   mutate(species = c("diabolicum", "divinum", "magniae", "medium")) %>%
-  write.xlsx("Results/test_evaluation.xlsx")
+  write.xlsx("output/test_evaluation.xlsx")
 
 
-# // ESTUDY ENVIRONMENTAL VARIABLES EFFECT ON SPECIES OCCURRENCE
+# // STUDY ENVIRONMENTAL VARIABLES EFFECT ON SPECIES OCCURRENCE
 
 postBeta <- getPostEstimate(m, parName = "Beta")
-pdf(file = "Results/Betas.pdf", width = 6, height = 6)
+pdf(file = "output/Betas.pdf", width = 6, height = 6)
 plotBeta(m,
          post = postBeta,
          param = "Mean",
@@ -315,7 +315,7 @@ plot_omega <- function(m, n_random, supportLevel = 0.95) {
 }
 
 plot_omega(m, n_random = 1)
-pdf(file = "Results/Omegas.pdf", width = 4, height = 4)
+pdf(file = "output/Omegas.pdf", width = 4, height = 4)
 plot_omega(m, n_random = 2)
 dev.off()
 
@@ -330,7 +330,7 @@ plotVariancePartitioning(m, VP = VP)
 
 VP <- computeVariancePartitioning(m, group = c(1, 1, 1, 1, 1, 2, 2, 2, 2), groupnames = c("Climate", "Habitat"))
 
-pdf(file = "Results/VariancePartitioning.pdf", width = 7, height = 5)
+pdf(file = "output/VariancePartitioning.pdf", width = 7, height = 5)
 plotVariancePartitioning(m, VP = VP, args.legend = list(x = 2.3, y = 0.97, bg = "white", cex = 0.8))
 dev.off()
 
@@ -371,27 +371,27 @@ plot_response_curve <- function(var, m) {
   }
 }
 
-pdf(file = "Results/PC1_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/PC1_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("PC1", m)
 dev.off()
 
-pdf(file = "Results/PC2_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/PC2_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("PC2", m)
 dev.off()
 
-pdf(file = "Results/PC3_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/PC3_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("PC3", m)
 dev.off()
 
-pdf(file = "Results/PC4_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/PC4_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("PC4", m)
 dev.off()
 
-pdf(file = "Results/Hydrology_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/Hydrology_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("Hydrology", m)
 dev.off()
 
-pdf(file = "Results/Cover_rc.pdf", width = 8, height = 5.5)
+pdf(file = "output/Cover_rc.pdf", width = 8, height = 5.5)
 plot_response_curve("Cover", m)
 dev.off()
 
