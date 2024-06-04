@@ -33,4 +33,4 @@ docs/
 po/*~
 # RStudio Connect folder
 rsconnect/
-Sphagnum_magellanicum_complex.Rproj
+*.Rproj
