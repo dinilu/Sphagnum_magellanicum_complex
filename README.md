@@ -1,3 +1,5 @@
+# Ecological differentiation and sympatry of cryptic species in the Sphagnum magellanicum complex (Sphagnaceae: Bryophyta)
+
 Code and data for manuscript on the genetic and ecological differences between cryptic species in the Sphagnum magellanicum complex.
 The projects consist of three subprojects:
 01_HMSC: Run a Hierarchical Modelling of Species Communities to study the drivers of distribution at macro- and micro-scale. To be run as an usual R script.
