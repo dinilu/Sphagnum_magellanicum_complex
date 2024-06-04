@@ -173,11 +173,7 @@ combine_pres_abse_data <- function(occ_filt_part, psa, env){
     bind_rows(occ_filt_part, psa)
 }
 
-# lapply(species_pa, summary)
-# lapply(species_pa, dim)
-# 
 
- 
 adjust_max <- function(species, env, bg, vars){
   tune_max(
     data = species,
@@ -501,42 +497,3 @@ plot_fut_prediction <- function(pred1, pred2, pred3, pred4, species, filename, t
   
   return("Done")
 }
-
-
-
-
-# unconstrained <- lapply(pr_1, function(x) x$meanw[[1]])
-# lapply(unconstrained, function(x) {names(x) <- "unconstrained"; return(x)})
-# 
-# cl <- c("#FDE725", "#B3DC2B", "#6DCC57", "#36B677", "#1F9D87", "#25818E", "#30678D", "#3D4988", "#462777", "#440154")
-# plot(unconstrained[[4]], col=cl, legend=TRUE, axes=FALSE)
-# lapply(model_perf)
-# 
-# 
-# thr_val <- lapply(ens_m, function(x){
-#   x$performance %>%
-#   dplyr::filter(threshold == "max_sens_spec") %>%
-#   pull(thr_value)
-#   }
-# )
-# 
-# m_pres <- mapply(function(x, y, z){
-#   msdm_posteriori(
-#   records = x,
-#   x = "x",
-#   y = "y",
-#   pr_ab = "pr_ab",
-#   cont_suit = y$meanw[[1]],
-#   method = c("obr"),
-#   thr = c("sensitivity", sens = z),
-#   buffer = NULL
-#   )
-# }, species_data, pr_1, thr_val, SIMPLIFY = FALSE)
-# 
-# constrained <- lapply(m_pres, function(x) x$meanw[[1]])
-# constrained <- lapply(constrained, function(x) {
-#   names(x) <- "constrained"
-#   x})
-# 
-# cl <- c("#FDE725", "#B3DC2B", "#6DCC57", "#36B677", "#1F9D87", "#25818E", "#30678D", "#3D4988", "#462777", "#440154")
-# plot(constrained[[4]], col=cl, legend=FALSE, axes=FALSE)

@@ -52,7 +52,8 @@ list(
   tar_target(vars,
              c("bio_4", "bio_5", "bio_12", "bio_15")),
   tar_target(env_file,
-             prep_env_data(env_folder = "/media/NAS/Public/Data/PaleoClim/CHELSA_cur_V1_2B_r30s/30sec/",
+             # Data should be downloaded from this website: http://www.paleoclim.org/
+             prep_env_data(env_folder = "../Data/PaleoClim/CHELSA_cur_V1_2B_r30s/30sec/",
                            vars = vars,
                            mask_file = NULL),
              format = "qs"),
@@ -90,9 +91,6 @@ list(
   tar_target(species_pa,
              combine_pres_abse_data(occ_filt_part, psa, env_data),
              pattern = map(occ_filt_part, psa)),
-  # tar_target(plots,
-  #            plot_data(env_data, cal_area, occ_data, occ_filt_part, blocks_layer, bg, psa),
-  #            pattern = map(cal_area, occ_data, occ_filt_part, blocks_layer, bg, psa))
   # // CALIBRATE MODELS
   tar_target(max_mods,
              adjust_max(species_pa, env_data, bg, vars),
@@ -148,7 +146,8 @@ list(
                              "output/current_maps.pdf")),
   # UNDER PAST (LGM) CONDITIONS
   tar_target(past_env_file,
-             prep_past_env_data(env_folder = "/media/NAS/Public/Data/PaleoClim/chelsa_LGM_v1_2B_r30s/30sec/",
+             # Data should be downloaded from this website: http://www.paleoclim.org/
+             prep_past_env_data(env_folder = "../Data/PaleoClim/chelsa_LGM_v1_2B_r30s/30sec/",
                                 vars = vars,
                                 mask_file = NULL),
              format = "qs"),
@@ -168,6 +167,8 @@ list(
 
   # FUT V1.2
 
+  # Data should be downloaded from this website: https://chelsa-climate.org/
+  
   tar_target(fut_rcp26_env_data,
              prep_fut1_env_data(env_folder = "/media/NAS/Public/Data/Chelsa/v1.2/2061-80/bio/",
                                 rcp = "rcp26",
